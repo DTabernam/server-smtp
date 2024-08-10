@@ -93,7 +93,7 @@ const verifyEmailSMTP = async (email) => {
           break;
         case 1:
           if (message.includes('250')) {
-            client.write(`MAIL FROM:<noreply@${domain}>\r\n`);
+            client.write(`VRFY ${email}\r\n`);
             stage++;
           } else {
             client.end();
@@ -102,6 +102,19 @@ const verifyEmailSMTP = async (email) => {
           break;
         case 2:
           if (message.includes('250')) {
+            const domainInfo = await getDomainInfo(domain);
+            client.end();
+            resolve({ verified: true, mxRecord, domainInfo });
+          } else if (message.includes('550')) {
+            client.end();
+            resolve({ verified: false, mxRecord, domainInfo: null });
+          } else {
+            client.write(`MAIL FROM:<noreply@${domain}>\r\n`);
+            stage++;
+          }
+          break;
+        case 3:
+          if (message.includes('250')) {
             client.write(`RCPT TO:<${email}>\r\n`);
             stage++;
           } else {
@@ -109,7 +122,7 @@ const verifyEmailSMTP = async (email) => {
             resolve({ verified: false, mxRecord, domainInfo: null });
           }
           break;
-        case 3:
+        case 4:
           if (message.includes('250')) {
             const domainInfo = await getDomainInfo(domain);
             client.end();
