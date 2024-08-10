@@ -72,7 +72,7 @@ const verifyEmailSMTP = async (email) => {
   return new Promise((resolve, reject) => {
     const client = net.createConnection({ host: mxRecord, port: 25 });
 
-    let stage = 0; // Indicar la etapa del protocolo SMTP
+    let stage = 0;
 
     client.setEncoding('utf8');
     client.setTimeout(10000); // Tiempo de espera para la conexión SMTP
@@ -93,7 +93,7 @@ const verifyEmailSMTP = async (email) => {
           break;
         case 1:
           if (message.includes('250')) {
-            client.write(`VRFY ${email}\r\n`);
+            client.write(`MAIL FROM:<noreply@${domain}>\r\n`);
             stage++;
           } else {
             client.end();
@@ -101,6 +101,15 @@ const verifyEmailSMTP = async (email) => {
           }
           break;
         case 2:
+          if (message.includes('250')) {
+            client.write(`RCPT TO:<${email}>\r\n`);
+            stage++;
+          } else {
+            client.end();
+            resolve({ verified: false, mxRecord, domainInfo: null });
+          }
+          break;
+        case 3:
           if (message.includes('250')) {
             const domainInfo = await getDomainInfo(domain);
             client.end();
