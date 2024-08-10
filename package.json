@@ -1,0 +1,23 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dns": "^0.2.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "net": "^1.0.2",
+    "nodemailer": "^6.9.14",
+    "require": "^2.4.20",
+    "util": "^0.12.5",
+    "whois-json": "^2.0.4"
+  }
+}
