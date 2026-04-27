@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "whois": "^2.14.2",
+    "whois-json": "^2.0.4"
+  }
+}
